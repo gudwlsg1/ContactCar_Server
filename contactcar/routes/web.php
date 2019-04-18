@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('buyers','BuyerController');
+
+#Route::post('/auth/buyers','BuyerController@store');
