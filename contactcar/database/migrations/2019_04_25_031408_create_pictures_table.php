@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBuyersTable extends Migration
+class CreatePicturesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateBuyersTable extends Migration
      */
     public function up()
     {
-        Schema::create('buyers', function (Blueprint $table) {
+        Schema::create('pictures', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name', 40)->nullable(false);
-            $table->string('userId' , 40)->nullable(false)->unique();
-            $table->string('email');
-            $table->string('password', 100)->nullable(false);
-            $table->string('address', 100);
+            $table->string("path");
+            $table->bigInteger("postId")->unsigned()->index();
+
+            $table->foreign('postId')->references('id')
+                ->on('salehistorys');
+
             $table->timestamps();
         });
     }
@@ -31,6 +32,6 @@ class CreateBuyersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('buyers');
+        Schema::dropIfExists('pictures');
     }
 }

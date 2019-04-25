@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use function MongoDB\BSON\toJSON;
-use phpDocumentor\Reflection\Types\String_;
-use function PHPSTORM_META\type;
+use DB;
 
-class BuyerController extends Controller
+class AuthController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -37,10 +35,53 @@ class BuyerController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $data = $request->json()->get("idx");
+        $data = $request->json();
 
-        return $data;
+        $email = null;
+        $address = null;
+
+        $name = $data->get("name");
+        $userId = $data->get("userId");
+        $email = $data->get("email");
+        $password = $data->get("password");
+        $address = $data->get("address");
+
+        $id = DB::table('users')->insertGetId([
+            'name' => $name,
+            'userId' => $userId,
+            'email' => $email,
+            'password' => $password,
+            'address' => $address
+        ]);
+
+        return response([
+            'status' => 200,
+            'message' => 'success',
+            'data' => DB::table('users')->where('id',$id)->first()
+        ]);
+    }
+
+    public function login(Request $request){
+        $data = $request->json();
+
+        $userId = $data->get("userId");
+        $password = $data->get("password");
+
+        $id = DB::table('users')->where('userId',$userId)->where('password',$password)->value('id');
+
+        if($id === "" || $id === null){
+            return response([
+                'status' => 404,
+                'message' => 'NOT FOUND',
+                'data' => null
+            ]);
+        }
+
+        return response([
+            'status' => 200,
+            'message' => 'success',
+            'data' => DB::table('users')->where('id',$id)->first()
+        ]);
     }
 
     /**
