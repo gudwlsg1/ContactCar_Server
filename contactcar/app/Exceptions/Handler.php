@@ -47,14 +47,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-            if($exception instanceof QueryException){
-                $response = response([
-                    'status' => 403,
-                    'message' => 'exist value',
-                ],403);
-                return $response;
-            }
-
         return parent::render($request, $exception);
     }
 }

@@ -8,7 +8,7 @@ class SaleHistroy extends Model
 {
     //
     protected $fillable = [
-        'title', 'content', 'price',
+        'title', 'content', 'price','userId',
     ];
 
     public function Pictures(){

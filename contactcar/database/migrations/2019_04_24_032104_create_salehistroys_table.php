@@ -15,9 +15,13 @@ class CreateSalehistroysTable extends Migration
     {
         Schema::create('salehistorys', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('userId')->unsigned();
             $table->string("title");
             $table->string("content")->nullable();
             $table->integer("price")->unsigned();
+
+            $table->foreign('userId')->references('id')
+                ->on('users');
         });
     }
 

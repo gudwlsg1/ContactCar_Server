@@ -17,3 +17,8 @@ Route::get('/', function () {
 
 Route::resource('auth','AuthController');
 Route::post('/auth/login','AuthController@login');
+
+Route::resource('sale', 'SaleController');
+
+Route::post('picture/{postId}', 'PictureController@store');
+Route::get('picture', 'PictureController@index');
