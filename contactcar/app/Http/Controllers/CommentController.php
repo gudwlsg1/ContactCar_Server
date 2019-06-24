@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use DB;
-use Symfony\Component\VarDumper\Cloner\Data;
 
-class SaleController extends Controller
+class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +19,7 @@ class SaleController extends Controller
             return response([
                 'status' => 200,
                 'message' => 'success',
-                'data' => DB::table('salehistorys')->get()
+                'data' => DB::table('comments')->get()
             ]);
 
         }catch (QueryException $ex){
@@ -54,34 +52,29 @@ class SaleController extends Controller
         //
         $data = $request->json();
 
-        $content = null;
-        $userId = null;
-
-        $title = $data->get("title");
-        $content = $data->get("content");
-        $price = $data->get("price");
         $userId = $data->get("userId");
+        $postId = $data->get("postId");
+        $content = $data->get("content");
 
-        if($userId == null){
+        if($userId == null || $postId == null){
             $response = response([
                 'status' => 403,
-                'message' => 'userId is null',
+                'message' => 'userId or postId is null',
             ],403);
             return $response;
         }
 
         try{
-            $id = DB::table('salehistorys')->insertGetId([
-                'title' => $title,
-                'content' => $content,
-                'price' => $price,
-                'userId' => $userId
+            $id = DB::table('comments')->insertGetId([
+                'userId' => $userId,
+                'postId' => $postId,
+                'content' => $content
             ]);
 
             return response([
                 'status' => 200,
                 'message' => 'success',
-                'data' => DB::table('salehistorys')->where('id',$id)->first()
+                'data' => DB::table('comments')->where('id',$id)->first()
             ]);
 
         }catch (QueryException $ex){
@@ -106,14 +99,14 @@ class SaleController extends Controller
             return response([
                 'status' => 200,
                 'message' => 'success',
-                'data' => DB::table('salehistorys')->where('id',$id)->first()
+                'data' => DB::table('comments')->where('postId',$id)->get()
             ]);
 
         }catch (QueryException $ex){
             $response = response([
-                'status' => 403,
-                'message' => 'exist value',
-            ],403);
+                'status' => 500,
+                'message' => 'Server Error',
+            ],500);
             return $response;
         }
     }
@@ -141,17 +134,15 @@ class SaleController extends Controller
         //
         $data = $request->json();
 
-        $title = $data->get("title");
         $content = $data->get("content");
-        $price = $data->get("price");
 
         try{
-            DB::table('salehistorys')->where('id',$id)->update(['title' => $title, 'content' => $content, 'price' => $price, 'updated' => \Carbon\Carbon::now()->addHours(9)]);
+            DB::table('comments')->where('id',$id)->update(['content' => $content]);
 
             return response([
                 'status' => 200,
                 'message' => 'success',
-                'data' => DB::table('salehistorys')->where('id',$id)->first()
+                'data' => DB::table('comments')->where('id',$id)->first()
             ]);
         }catch (QueryException $ex){
             $response = response([
@@ -172,9 +163,7 @@ class SaleController extends Controller
     {
         //
         try{
-            DB::table('comments')->where('postId',$id)->delete();
-            DB::table('pictures')->where('postId',$id)->delete();
-            DB::table('salehistorys')->where('id',$id)->delete();
+            DB::table('comments')->where('id',$id)->delete();
             return response([
                 'status' => 200,
                 'message' => 'success',

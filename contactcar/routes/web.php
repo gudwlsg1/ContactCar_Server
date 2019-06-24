@@ -22,3 +22,5 @@ Route::resource('sale', 'SaleController');
 
 Route::post('picture/{postId}', 'PictureController@store');
 Route::get('picture', 'PictureController@index');
+
+Route::resource('comment', 'CommentController');

@@ -79,7 +79,7 @@ class PictureController extends Controller
         return response([
             'status' => 200,
             'message' => 'success',
-            'data' => null
+            'data' => DB::select('select * from pictures where postId = ?',[$postId])
         ]);
     }
 
